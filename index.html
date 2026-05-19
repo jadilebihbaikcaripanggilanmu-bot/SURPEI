@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Surveyor Simulator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- INTRO -->
+    <section id="intro" class="screen active">
+      <div class="bg intro-bg"></div>
+      <div class="cinematic-vignette"></div>
+      <div class="intro-content">
+        <p class="eyebrow">GEOMATICS FIELD SYSTEM</p>
+        <h1>SURVEYOR<br/>SIMULATOR</h1>
+        <p id="bootText" class="boot">INITIALIZING FIELD MODULES...</p>
+        <button id="skipIntro" class="ghost-btn">SKIP INTRO</button>
+      </div>
+    </section>
+
+    <!-- MAIN MENU -->
+    <section id="mainMenu" class="screen">
+      <div class="bg menu-bg"></div>
+      <div class="menu-overlay"></div>
+
+      <div class="title-block">
+        <p class="eyebrow">GEOMATICS CAREER SIMULATOR</p>
+        <h1>SURVEYOR<br/>SIMULATOR</h1>
+        <p class="subtitle">A fieldwork career simulation for future geomatics engineers.</p>
+      </div>
+
+      <aside class="menu-card">
+        <p class="menu-label">CAREER MENU</p>
+        <button class="menu-btn" data-goto="loading">CONTINUE</button>
+        <button class="menu-btn" data-goto="loading">NEW CAREER</button>
+        <button class="menu-btn" data-goto="loading">LOAD SAVE</button>
+        <button class="menu-btn" data-modal="settings">SETTINGS</button>
+        <button class="menu-btn" data-modal="credits">CREDITS</button>
+        <button class="menu-btn" onclick="alert('Web demo: tutup tab browser untuk keluar.')">EXIT</button>
+        <p class="small-note">Playable stage: Waterpass Road Levelling</p>
+      </aside>
+
+      <div class="career-strip">
+        <span class="active">AUTO LEVEL</span>
+        <span>TOTAL STATION</span>
+        <span>DRONE MAPPING</span>
+        <span>USV BATHYMETRY</span>
+        <span>OFFSHORE</span>
+      </div>
+
+      <footer>Demo v0.1 • Final Project SIG Terapan • HTML Web Prototype</footer>
+    </section>
+
+    <!-- LOADING -->
+    <section id="loading" class="screen">
+      <div class="bg menu-bg blur"></div>
+      <div class="cinematic-vignette"></div>
+      <div class="loading-box">
+        <p class="eyebrow">FIELD CONTRACT ACCEPTED</p>
+        <h2>Preparing Home Base</h2>
+        <div class="loading-bar"><span></span></div>
+        <p class="small-note">Loading player profile, contract board, and survey equipment...</p>
+      </div>
+    </section>
+
+    <!-- HOME -->
+    <section id="home" class="screen">
+      <div class="home-bg"></div>
+      <div class="top-hud">
+        <b>New Surveyor</b>
+        <span>Money: $0</span>
+        <span>Reputation: 0</span>
+      </div>
+      <div class="home-panel">
+        <p class="eyebrow">HOME BASE</p>
+        <h2>Start Your First Field Contract</h2>
+        <p>Kamu baru lulus S1 Geomatika. Misi awal: proyek levelling jalan menggunakan waterpass.</p>
+        <button class="primary-btn" data-modal="contract">OPEN CONTRACT BOARD</button>
+        <button class="secondary-btn" data-goto="mainMenu">BACK TO MENU</button>
+      </div>
+    </section>
+
+    <!-- MISSION -->
+    <section id="mission" class="screen">
+      <div class="mission-bg"></div>
+      <div class="mission-layout">
+        <div class="field-card">
+          <p class="eyebrow">ROAD LEVELLING MISSION</p>
+          <h2>Waterpass Fieldwork</h2>
+          <p>Target: hitung elevasi STA jalan berdasarkan bacaan BS dan FS.</p>
+          <div class="field-visual">
+            <div class="road"></div>
+            <div class="tripod"></div>
+            <div class="staff"></div>
+            <div class="bm-marker">BM 01</div>
+            <div class="sta-marker">STA</div>
+          </div>
+          <button class="primary-btn" id="openViewfinder">WATERPASS VIEW</button>
+        </div>
+
+        <div class="calc-card">
+          <p class="menu-label">CALCULATION PANEL</p>
+          <div class="sta-box">
+            <span>Current Target</span>
+            <b id="staName">STA 0+000</b>
+          </div>
+          <label>BS Reading</label>
+          <input id="bs" value="1.500" />
+          <label>FS Reading</label>
+          <input id="fs" value="1.468" />
+          <button class="menu-btn" id="calculateBtn">CALCULATE</button>
+          <button class="menu-btn" id="nextStaBtn">NEXT STA</button>
+          <button class="menu-btn" id="finishMissionBtn">FINISH MISSION</button>
+          <p id="calcResult" class="result-text">Masukkan BS dan FS, lalu klik calculate.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULT -->
+    <section id="result" class="screen">
+      <div class="bg intro-bg"></div>
+      <div class="result-overlay"></div>
+      <div class="result-card">
+        <p class="eyebrow">MISSION COMPLETED</p>
+        <h2>Road Levelling Result</h2>
+        <p id="finalSummary">Average Error: 0.000 m<br/>Rating: Accepted<br/>Reward: $650<br/>Reputation: +10</p>
+        <button class="primary-btn" data-goto="home">BACK TO HOME</button>
+        <button class="secondary-btn" data-goto="mainMenu">MAIN MENU</button>
+      </div>
+    </section>
+
+    <!-- MODALS -->
+    <div id="modalLayer" class="modal-layer">
+      <div class="modal" id="settingsModal">
+        <h2>Settings</h2>
+        <p>Audio: <button id="audioToggle" class="tiny-btn">OFF</button></p>
+        <p>Graphics: Cinematic Web Demo</p>
+        <p>Mode: Presentation Build</p>
+        <button class="primary-btn close-modal">CLOSE</button>
+      </div>
+
+      <div class="modal" id="creditsModal">
+        <h2>Credits</h2>
+        <p><b>Surveyor Simulator</b></p>
+        <p>Final Project SIG Terapan</p>
+        <p>Features: Main Menu, Contract Board, Waterpass View, Levelling Calculation, Result Screen.</p>
+        <button class="primary-btn close-modal">CLOSE</button>
+      </div>
+
+      <div class="modal contract-modal" id="contractModal">
+        <h2>Contract Board</h2>
+        <p><b>Road Levelling - PT WiQa Infrastruktur</b></p>
+        <p>Objective: Cari BM 01, baca BS/FS, hitung HI dan elevasi STA, tentukan cut/fill.</p>
+        <p>Reward: $500 + Precision Bonus</p>
+        <button class="primary-btn" data-goto="mission">ACCEPT CONTRACT</button>
+        <button class="secondary-btn close-modal">CLOSE</button>
+      </div>
+    </div>
+
+    <!-- WATERPASS VIEWFINDER -->
+    <div id="viewfinder" class="viewfinder">
+      <div class="scope">
+        <div class="cross h"></div>
+        <div class="cross v"></div>
+        <div class="scope-staff"></div>
+        <p id="viewReading">BS = 1.500 m</p>
+      </div>
+      <div class="view-actions">
+        <button class="menu-btn" id="targetBM">TARGET BM</button>
+        <button class="menu-btn" id="targetSTA">TARGET STA</button>
+        <button class="menu-btn" id="closeViewfinder">CLOSE VIEW</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
