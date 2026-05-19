@@ -10,64 +10,63 @@ const fsHints = [1.468, 1.547, 1.432, 1.583, 1.388];
 let currentSta = 0;
 let measured = [];
 let audioOn = false;
-let audioCtx;
-let osc;
-let gain;
+let audioCtx, osc, gain;
 
 function showScreen(id) {
-  screens.forEach(s => s.classList.remove("active"));
+  screens.forEach(screen => screen.classList.remove("active"));
   document.getElementById(id).classList.add("active");
 
   if (id === "loading") {
-    setTimeout(() => showScreen("home"), 1800);
+    setTimeout(() => showScreen("home"), 1850);
   }
 }
 
 function openModal(name) {
   modalLayer.classList.add("active");
-  modals.forEach(m => m.classList.remove("active"));
-  document.getElementById(name + "Modal").classList.add("active");
+  modals.forEach(modal => modal.classList.remove("active"));
+  document.getElementById(`${name}Modal`).classList.add("active");
 }
 
 function closeModal() {
   modalLayer.classList.remove("active");
-  modals.forEach(m => m.classList.remove("active"));
+  modals.forEach(modal => modal.classList.remove("active"));
 }
 
-document.querySelectorAll("[data-goto]").forEach(btn => {
-  btn.addEventListener("click", () => {
+document.querySelectorAll("[data-goto]").forEach(el => {
+  el.addEventListener("click", () => {
     closeModal();
-    showScreen(btn.dataset.goto);
+    showScreen(el.dataset.goto);
   });
 });
 
-document.querySelectorAll("[data-modal]").forEach(btn => {
-  btn.addEventListener("click", () => openModal(btn.dataset.modal));
+document.querySelectorAll("[data-modal]").forEach(el => {
+  el.addEventListener("click", () => openModal(el.dataset.modal));
 });
 
-document.querySelectorAll(".close-modal").forEach(btn => btn.addEventListener("click", closeModal));
+document.querySelectorAll(".close-modal").forEach(el => el.addEventListener("click", closeModal));
 
-document.getElementById("skipIntro").addEventListener("click", () => showScreen("mainMenu"));
-setTimeout(() => showScreen("mainMenu"), 3300);
+setTimeout(() => showScreen("menu"), 3300);
 
 setInterval(() => {
-  const dots = ".".repeat(Math.floor(Date.now() / 350) % 4);
   const boot = document.getElementById("bootText");
-  if (boot) boot.textContent = `INITIALIZING FIELD MODULES${dots}\nLOADING BM / STA DATA${dots}\nCALIBRATING WATERPASS VIEW${dots}`;
-}, 300);
+  if (!boot) return;
+  const dots = ".".repeat(Math.floor(Date.now() / 350) % 4);
+  boot.textContent = `INITIALIZING FIELD MODULES${dots}\nLOADING BM / STA DATA${dots}\nCALIBRATING WATERPASS VIEW${dots}`;
+}, 280);
 
 function updateSta() {
   document.getElementById("staName").textContent = staNames[currentSta];
-  document.getElementById("fs").value = fsHints[currentSta].toFixed(3);
-  document.getElementById("calcResult").textContent = "Masukkan BS dan FS, lalu klik calculate.";
+  document.getElementById("fsInput").value = fsHints[currentSta].toFixed(3);
+  document.getElementById("calcOutput").textContent = "Masukkan BS dan FS, lalu klik calculate.";
 }
+updateSta();
 
-document.getElementById("calculateBtn").addEventListener("click", () => {
-  const bs = parseFloat(document.getElementById("bs").value.replace(",", "."));
-  const fs = parseFloat(document.getElementById("fs").value.replace(",", "."));
+document.getElementById("calculate").addEventListener("click", () => {
+  const bs = parseFloat(document.getElementById("bsInput").value.replace(",", "."));
+  const fs = parseFloat(document.getElementById("fsInput").value.replace(",", "."));
 
   if (Number.isNaN(bs) || Number.isNaN(fs)) {
-    document.getElementById("calcResult").textContent = "Input salah. Gunakan angka seperti 1.500.";
+    document.getElementById("calcOutput").textContent = "Input salah. Gunakan angka seperti 1.500.";
     return;
   }
 
@@ -79,7 +78,7 @@ document.getElementById("calculateBtn").addEventListener("click", () => {
 
   measured[currentSta] = { elev, error, decision };
 
-  document.getElementById("calcResult").textContent =
+  document.getElementById("calcOutput").textContent =
 `HASIL ${staNames[currentSta]}
 
 HI = BM + BS
@@ -94,14 +93,13 @@ Decision = ${decision}
 Error = ${error.toFixed(3)} m`;
 });
 
-document.getElementById("nextStaBtn").addEventListener("click", () => {
+document.getElementById("nextSTA").addEventListener("click", () => {
   currentSta = (currentSta + 1) % staNames.length;
   updateSta();
 });
 
-document.getElementById("finishMissionBtn").addEventListener("click", () => {
+document.getElementById("finishMission").addEventListener("click", () => {
   const count = measured.filter(Boolean).length;
-
   if (count < staNames.length) {
     alert("Belum semua STA dihitung. Selesaikan 5 STA dulu.");
     return;
@@ -112,26 +110,29 @@ document.getElementById("finishMissionBtn").addEventListener("click", () => {
   const reward = rating === "Perfect" ? 750 : rating === "Accepted" ? 650 : rating === "Warning" ? 550 : 500;
   const rep = rating === "Perfect" ? 15 : rating === "Accepted" ? 10 : rating === "Warning" ? 7 : 3;
 
-  document.getElementById("finalSummary").innerHTML =
-`Average Error: ${avg.toFixed(3)} m<br/>
-Rating: ${rating}<br/>
-Reward: $${reward}<br/>
-Reputation: +${rep}<br/><br/>
-${staNames.map((n, i) => `${n}: ${measured[i].elev.toFixed(3)} m — ${measured[i].decision}`).join("<br/>")}`;
+  document.getElementById("finalResult").innerHTML =
+`Average Error: ${avg.toFixed(3)} m<br>
+Rating: ${rating}<br>
+Reward: $${reward}<br>
+Reputation: +${rep}<br><br>
+${staNames.map((name, i) => `${name}: ${measured[i].elev.toFixed(3)} m — ${measured[i].decision}`).join("<br>")}`;
 
   showScreen("result");
 });
 
-const viewfinder = document.getElementById("viewfinder");
-document.getElementById("openViewfinder").addEventListener("click", () => viewfinder.classList.add("active"));
-document.getElementById("closeViewfinder").addEventListener("click", () => viewfinder.classList.remove("active"));
-document.getElementById("targetBM").addEventListener("click", () => document.getElementById("viewReading").textContent = "BS = 1.500 m");
-document.getElementById("targetSTA").addEventListener("click", () => document.getElementById("viewReading").textContent = `FS ${staNames[currentSta]} = ${fsHints[currentSta].toFixed(3)} m`);
+const scope = document.getElementById("scope");
+document.getElementById("openScope").addEventListener("click", () => scope.classList.add("active"));
+document.getElementById("closeScope").addEventListener("click", () => scope.classList.remove("active"));
+document.getElementById("targetBM").addEventListener("click", () => {
+  document.getElementById("scopeReading").textContent = "TARGET BM 01 • BS = 1.500 m";
+});
+document.getElementById("targetSTA").addEventListener("click", () => {
+  document.getElementById("scopeReading").textContent = `${staNames[currentSta]} • FS = ${fsHints[currentSta].toFixed(3)} m`;
+});
 
 document.getElementById("audioToggle").addEventListener("click", () => {
   audioOn = !audioOn;
   document.getElementById("audioToggle").textContent = audioOn ? "ON" : "OFF";
-
   if (audioOn) startAmbient();
   else stopAmbient();
 });
@@ -142,12 +143,12 @@ function startAmbient() {
     osc = audioCtx.createOscillator();
     gain = audioCtx.createGain();
     osc.type = "sine";
-    osc.frequency.value = 110;
+    osc.frequency.value = 104;
     gain.gain.value = 0.025;
     osc.connect(gain);
     gain.connect(audioCtx.destination);
     osc.start();
-  } else if (audioCtx.state === "suspended") {
+  } else {
     audioCtx.resume();
   }
 }
@@ -155,5 +156,3 @@ function startAmbient() {
 function stopAmbient() {
   if (audioCtx) audioCtx.suspend();
 }
-
-updateSta();
